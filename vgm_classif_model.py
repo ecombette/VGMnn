@@ -88,7 +88,7 @@ if __name__ == "__main__":
 		help="Batch size")
 	parser.add_argument(
 		"--train_steps",
-		default=5000,
+		default=10000,
 		type=int,
 		help="Number of training steps")
 	FLAGS, _ = parser.parse_known_args()
