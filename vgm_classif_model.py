@@ -4,7 +4,7 @@ import dataset_processor
 
 def main(argv):
 	# Retrieve training and evaluation data
-	[train_x, train_y], [eval_x, eval_y] = dataset_processor.process_data(FLAGS.dataset_dir)
+	[train_x, train_y], [eval_x, eval_y], [test_x, test_y] = dataset_processor.process_data(FLAGS.dataset_dir)
 	
 	# Feature columns describe how to use the input.
 	matrix_feature_column = tf.feature_column.numeric_column(key="Notes", shape=[100,3])
@@ -24,11 +24,27 @@ def main(argv):
 	
 	# Evaluate the model.
 	eval_result = classifier.evaluate(input_fn=lambda:eval_input_fn(eval_x, eval_y, FLAGS.batch_size))
-	
 	print('\nTest set accuracy: {accuracy:0.3f}\n'.format(**eval_result))
-	print("TO DO : Generate predictions from the model")
 	
-    
+	# Test the model.
+	predictions = classifier.predict(
+		input_fn=lambda:eval_input_fn(test_x,
+			labels=None,
+			batch_size=FLAGS.batch_size)
+			)
+	
+	expected = []
+	for game in test_y:
+		expected.append(dataset_processor.GAME_SERIES[game])
+	
+	template = ('Prediction is "{}" ({:.1f}%), expected "{}"')
+	for pred_dict, expec in zip(predictions, expected):
+		class_id = pred_dict['class_ids'][0]
+		probability = pred_dict['probabilities'][class_id]
+		print(template.format(dataset_processor.GAME_SERIES[class_id],
+			100 * probability,
+			expec))
+		
 
 def train_input_fn(features, labels, batch_size):
     """An input function for training"""

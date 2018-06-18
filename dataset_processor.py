@@ -45,7 +45,8 @@ def process_data(dataset_dir):
 			line = fp.readline()
 			while line:
 				file_info = line.split()
-				print(file_info) # LOG
+				#print(file_info)
+				
 				# Retrieve the melody track from the MIDI file
 				sequence = pretty_midi.PrettyMIDI(dataset_dir + '/' + game + '/' + file_info[0] + '.mid')
 				track_matrix = []
@@ -81,9 +82,13 @@ def process_data(dataset_dir):
 		eval_y.append(dataset[i][1])
 	
 	# TO DO : Keep track of unused MIDI files for predictions
+	test_x = {"Notes" : []}
+	test_y = []
 	print("Prediction files :")
 	for i in range(135, len(dataset)):
+		test_x["Notes"].append(dataset[i][0])
+		test_y.append(dataset[i][1])
 		print(dataset[i][2])
 	
-	return [train_x, train_y], [eval_x, eval_y]
+	return [train_x, train_y], [eval_x, eval_y], [test_x, test_y]
 
