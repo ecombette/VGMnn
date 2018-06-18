@@ -38,6 +38,12 @@ def analyse_dataset(dataset_dir):
 
 def process_data(dataset_dir):
 	dataset = []
+	min_pitch = 1000
+	min_duration = 1000
+	min_velocity = 1000
+	max_pitch = 0
+	max_duration = 0
+	max_velocity = 0
 	# Browse the MIDI files for each class
 	for game in GAME_SERIES:
 		trackfile = dataset_dir + '/' + game + '_tracks.txt'
@@ -55,7 +61,13 @@ def process_data(dataset_dir):
 				# Fill the notes in the matrix (the first 100 notes at most)
 				track_size = len(track) if len(track) <=100 else 100
 				for i in range(track_size):
-					track_matrix.append([track[i].pitch, track[i].start, track[i].end])
+					if track[i].pitch < min_pitch: min_pitch = track[i].pitch
+					if track[i].pitch > max_pitch: max_pitch = track[i].pitch
+					if track[i].end - track[i].start < min_duration: min_duration = track[i].end - track[i].start
+					if track[i].end - track[i].start > max_duration: max_duration = track[i].end - track[i].start
+					if track[i].velocity < min_velocity: min_velocity = track[i].velocity
+					if track[i].velocity > max_velocity: max_velocity = track[i].velocity
+					track_matrix.append([track[i].pitch, track[i].end - track[i].start, track[i].velocity])
 				if track_size < 100:
 					for i in range(track_size, 100):
 						track_matrix.append([0., 0., 0.])
@@ -66,6 +78,16 @@ def process_data(dataset_dir):
 	
 	# Randomize the dataset
 	random.shuffle(dataset)
+	
+	# Normalize dataset
+	for entry in range(len(dataset)):
+		for i in range(100):
+			if dataset[entry][0][i][0] != 0:
+				dataset[entry][0][i][0] = 1 + (dataset[entry][0][i][0] - min_pitch) / (max_pitch - min_pitch)
+			if dataset[entry][0][i][1] != 0:
+				dataset[entry][0][i][1] = 1 + (dataset[entry][0][i][1] - min_duration) / (max_duration - min_duration)
+			if dataset[entry][0][i][2] != 0:
+				dataset[entry][0][i][2] = 1 + (dataset[entry][0][i][2] - min_velocity) / (max_velocity - min_velocity)
 	
 	# Fill the training set with the first 105 samples
 	train_x = {"Notes" : []}
@@ -91,4 +113,8 @@ def process_data(dataset_dir):
 		print(dataset[i][2])
 	
 	return [train_x, train_y], [eval_x, eval_y], [test_x, test_y]
+
+def normalize_dataset(dataset):
+
+	return dataset
 

@@ -13,7 +13,7 @@ def main(argv):
 	classifier = tf.estimator.DNNClassifier(
 		feature_columns=[matrix_feature_column],
 		# Two hidden layers of 10 nodes each.
-		hidden_units=[10, 10],
+		hidden_units=[50],
 		# The model must choose between 3 classes (Zelda, Mario, Golden_Sun).
 		n_classes=3)
 	
@@ -88,7 +88,7 @@ if __name__ == "__main__":
 		help="Batch size")
 	parser.add_argument(
 		"--train_steps",
-		default=10000,
+		default=5000,
 		type=int,
 		help="Number of training steps")
 	FLAGS, _ = parser.parse_known_args()
