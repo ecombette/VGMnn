@@ -2,7 +2,7 @@ import argparse
 import tensorflow as tf
 import dataset_processor
 
-def main():
+def main(argv):
 	# Retrieve training and evaluation data
 	[train_x, train_y], [eval_x, eval_y] = dataset_processor.process_data(FLAGS.dataset_dir)
 	
@@ -76,5 +76,7 @@ if __name__ == "__main__":
 		type=int,
 		help="Number of training steps")
 	FLAGS, _ = parser.parse_known_args()
-	main()
+	
+	tf.logging.set_verbosity(tf.logging.INFO)
+	tf.app.run(main)
 
