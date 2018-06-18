@@ -1,5 +1,4 @@
 import os
-import argparse
 import pretty_midi
 
 def analyse_dataset(dataset_dir, classes):

@@ -1,8 +1,9 @@
+import argparse
 import tensorflow as tf
 import dataset_processor
 
 def main():
-	print('TO DO main')
+	dataset_processor.analyse_dataset(FLAGS.dataset_dir, ['Golden_Sun', 'Mario', 'Zelda'])
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
